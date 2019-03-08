@@ -1,25 +1,28 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 app = Flask(__name__)
 
-# from sqlalchemy import create_engine
-# from sqlalchemy.orm import sessionmaker
-# from database_setup import Base, Restaurant, MenuItem
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from database_setup import Base, Category, Item
 
 # Connect to database
-# engine = create_engine('sqlite:///categories.db')
-# Base.metadata.bind = engine  # connect classes to database tables
-# DBSession = sessionmaker(bind = engine) # create connection
-# session = DBSession() # create session
+engine = create_engine('sqlite:///catalog.db')
+Base.metadata.bind = engine  # connect classes to database tables
+DBSession = sessionmaker(bind = engine) # create connection
+session = DBSession() # create session
 
 # Show all categories (/categories and /)
 @app.route('/')
 @app.route('/category')
 @app.route('/categories')
 def showCategories():
-    return "Categories page"
+    categories = session.query(Category).all()
+    # return render_template("restaurants.html", restaurants = restaurants)
+    # return "Categories page"
+    return categories
 
 # Create new category
-@app.route('/category/new')
+@app.route('/category/new', methods = ['POST'])
 def newCategory():
     return "New category page"
 
@@ -54,12 +57,13 @@ def deleteItem(category_id, item_id):
     return "Delete item page for item {} in category {}".format(item_id, category_id)
 
 # Categories API
-@app.route('/category/json')
-def showCategoriesJson():
-    return "Categories JSON"
+@app.route('/category/JSON')
+def showCategoriesJSON():
+    categories = session.query(Category).all()
+    return jsonify(category=[r.serialize for c in categories])
 
 # Items API
-@app.route('/item/json/<int:category_id>')
+@app.route('/item/JSON/<int:category_id>')
 def showItems(category_id):
     return "Items in category {} JSON".format(category_id)
 
