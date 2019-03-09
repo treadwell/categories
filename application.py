@@ -40,7 +40,7 @@ def newCategory():
         return render_template('newCategory.html')
 
 # Edit category
-@app.route('/category/edit/<int:category_id>')
+@app.route('/category/edit/<int:category_id>', methods = ['GET', 'POST'])
 def editCategory(category_id):
     editedCategory = session.query(
     	Category).filter_by(id=category_id).one()
