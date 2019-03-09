@@ -17,14 +17,23 @@ session = DBSession() # create session
 @app.route('/categories')
 def showCategories():
     categories = session.query(Category).all()
-    # return render_template("restaurants.html", restaurants = restaurants)
+    return render_template("categories.html", categories = categories)
     # return "Categories page"
-    return categories
 
 # Create new category
-@app.route('/category/new', methods = ['POST'])
+@app.route('/category/new', methods = ['GET', 'POST'])
 def newCategory():
-    return "New category page"
+    if request.method == 'POST':
+        newCategory = Category(
+            name=request.form['name'],
+            # add user_name here
+            )
+        session.add(newCategory)
+        flash('New Category %s Successfully Created' % newCategory.name)
+        session.commit()
+        return redirect(url_for('showCategories'))
+    else:
+        return render_template('newCategory.html')
 
 # Edit category
 @app.route('/category/edit/<int:category_id>')
@@ -38,7 +47,7 @@ def deleteCategory(category_id):
 
 # show items within category
 @app.route('/category/<int:category_id>')
-def showCategoryItems(category_id):
+def showCategory(category_id):
     return "Items page for category {}".format(category_id)
 
 # Create new item in a category
@@ -69,7 +78,7 @@ def showItems(category_id):
 
 # login
 @app.route('/login')
-def login():
+def showLogin():
     return "Login page"
 
 # logout
@@ -79,5 +88,6 @@ def logout():
 
 
 if __name__ == "__main__":
+    app.secret_key = 'super_secret_key'
     app.debug = True
     app.run(host="0.0.0.0", port = 8000)
