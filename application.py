@@ -67,6 +67,7 @@ def deleteCategory(category_id):
     #     return "<script>function myFunction() {alert('You are not authorized to delete this category. Please create your own category in order to delete.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         session.delete(categoryToDelete)
+        session.query(Item).filter_by(category_id=category_id).delete()
         flash('%s Successfully Deleted' % categoryToDelete.name)
         session.commit()
         return redirect(url_for('showCategories', category_id=category_id))
@@ -138,9 +139,9 @@ def deleteItem(category_id, item_id):
         session.delete(itemToDelete)
         session.commit()
         flash("Item deleted!")
-        return redirect(url_for('showCategory', category_id = category_id))
+        return redirect(url_for('showCategory', category_id=category_id))
     else:
-        return render_template('deleteItem.html', item = itemToDelete)
+        return render_template('deleteItem.html', item = itemToDelete, category_id=category_id)
 
 # Categories API
 @app.route('/category/JSON')
