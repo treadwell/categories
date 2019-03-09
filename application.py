@@ -102,20 +102,45 @@ def newCategoryItem(category_id):
                 category_id=category_id) # , user_id=category.user_id)
         session.add(newItem)
         session.commit()
-        flash('New Menu %s Item Successfully Created' % (newItem.name))
+        flash('New Item,  %s, Successfully Created' % (newItem.name))
         return redirect(url_for('showCategory', category_id=category_id))
     else:
         return render_template('newitem.html', category_id=category_id)
 
 # Edit item in a category
-@app.route('/category/<int:category_id>/item/<int:item_id>/edit')
+@app.route('/category/<int:category_id>/item/<int:item_id>/edit', methods = ['GET', 'POST'])
 def editItem(category_id, item_id):
-    return "Edit item page for item {} in category {}".format(item_id, category_id)
+    # if 'username' not in login_session:
+    #     return redirect('/login')
+    editedItem = session.query(Item).filter_by(id=item_id).one()
+    category = session.query(Category).filter_by(id=category_id).one()
+    # if login_session['user_id'] != categor.user_id:
+    #     return "<script>function myFunction() {alert('You
+    #     are not authorized to edit items in this category.
+    #     Please create your own category in order to edit items.');}</script><body onload='myFunction()'>"
+    if request.method == 'POST':
+        if request.form['name']:
+            editedItem.name = request.form['name']
+        if request.form['description']:
+            editedItem.description = request.form['description']
+        session.add(editedItem)
+        session.commit()
+        flash('Item Successfully Edited')
+        return redirect(url_for('showCategory', category_id=category_id))
+    else:
+        return render_template('edititem.html', category_id=category_id, item_id=item_id, item=editedItem)
 
 # delete item in a category
-@app.route('/category/<int:category_id>/item/<int:item_id>/delete')
+@app.route('/category/<int:category_id>/item/<int:item_id>/delete', methods = ['GET', 'POST'])
 def deleteItem(category_id, item_id):
-    return "Delete item page for item {} in category {}".format(item_id, category_id)
+    itemToDelete = session.query(Item).filter_by(id = item_id).one()
+    if request.method == 'POST':
+        session.delete(itemToDelete)
+        session.commit()
+        flash("Item deleted!")
+        return redirect(url_for('showCategory', category_id = category_id))
+    else:
+        return render_template('deleteItem.html', item = itemToDelete)
 
 # Categories API
 @app.route('/category/JSON')
