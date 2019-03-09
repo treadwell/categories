@@ -16,6 +16,8 @@ session = DBSession() # create session
 @app.route('/category')
 @app.route('/categories')
 def showCategories():
+    '''Shows all categories associated with a user in the database'''
+    # edit to add user logic
     categories = session.query(Category).all()
     return render_template("categories.html", categories = categories)
     # return "Categories page"
@@ -23,6 +25,8 @@ def showCategories():
 # Create new category
 @app.route('/category/new', methods = ['GET', 'POST'])
 def newCategory():
+    # if 'username' not in login_session:
+    #    return redirect('/login')
     if request.method == 'POST':
         newCategory = Category(
             name=request.form['name'],
@@ -38,21 +42,53 @@ def newCategory():
 # Edit category
 @app.route('/category/edit/<int:category_id>')
 def editCategory(category_id):
-    return "Edit category {} page".format(category_id)
+    editedCategory = session.query(
+    	Category).filter_by(id=category_id).one()
+    # if 'username' not in login_session:
+    #     return redirect('/login')
+    # if editedCategory.user_id != login_session['user_id']:
+    #     return "<script>function myFunction() {alert('You are not authorized to edit this category. Please create your own category in order to edit.');}</script><body onload='myFunction()'>"
+    if request.method == 'POST':
+        if request.form['name']:
+            editedCategory.name = request.form['name']
+            flash('Category Successfully Edited %s' % editedCategory.name)
+            return redirect(url_for('showCategories'))
+    else:
+        return render_template('editCategory.html', category=editedCategory)
 
 # delete category
-@app.route('/category/delete/<int:category_id>')
+@app.route('/category/delete/<int:category_id>', methods = ['GET', 'POST'])
 def deleteCategory(category_id):
-    return "Delete category {} page".format(category_id)
+    categoryToDelete = session.query(
+    	Category).filter_by(id=category_id).one()
+    # if 'username' not in login_session:
+    #     return redirect('/login')
+    # if restaurantToDelete.user_id != login_session['user_id']:
+    #     return "<script>function myFunction() {alert('You are not authorized to delete this category. Please create your own category in order to delete.');}</script><body onload='myFunction()'>"
+    if request.method == 'POST':
+        session.delete(categoryToDelete)
+        flash('%s Successfully Deleted' % categoryToDelete.name)
+        session.commit()
+        return redirect(url_for('showCategories', category_id=category_id))
+    else:
+        return render_template('deleteCategory.html', category=categoryToDelete)
 
 # show items within category
 @app.route('/category/<int:category_id>')
 def showCategory(category_id):
-    return "Items page for category {}".format(category_id)
+    category = session.query(Category).filter_by(id=category_id).one()
+    # creator = getUserInfo(category.user_id)
+    items = session.query(Item).filter_by(
+        category_id=category_id).all()
+    # if 'username' not in login_session or creator.id != login_session['user_id']:
+    #     return render_template('publicmenu.html', items=items, restaurant=restaurant, creator=creator)
+    # else:
+    #    return render_template('menu.html', items=items, restaurant=restaurant, creator=creator)
+    return render_template('category.html', items=items, category=category) # , creator=creator)
 
 # Create new item in a category
 @app.route('/item/new/<int:category_id>')
-def newItem(category_id):
+def newCategoryItem(category_id):
     return "New item page for category {}".format(category_id)
 
 # Edit item in a category
@@ -76,15 +112,43 @@ def showCategoriesJSON():
 def showItems(category_id):
     return "Items in category {} JSON".format(category_id)
 
-# login
+# Login
 @app.route('/login')
 def showLogin():
-    return "Login page"
+    # Create anti-forgery state token
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in xrange(32))
+    login_session['state'] = state
+    # return "The current session state is %s" % login_session['state']
+    return render_template('login.html', STATE=state)
 
 # logout
 @app.route('/logout')
 def logout():
     return "Logout page"
+
+# User Helper Functions
+
+def createUser(login_session):
+    newUser = User(name=login_session['username'], email=login_session[
+                   'email'], picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
 
 
 if __name__ == "__main__":
