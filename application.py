@@ -87,17 +87,33 @@ def showCategory(category_id):
     return render_template('category.html', items=items, category=category) # , creator=creator)
 
 # Create new item in a category
-@app.route('/item/new/<int:category_id>')
+@app.route('/category/<int:category_id>/item/new', methods = ['GET', 'POST'])
 def newCategoryItem(category_id):
-    return "New item page for category {}".format(category_id)
+    # if 'username' not in login_session:
+    #     return redirect('/login')
+    category = session.query(Category).filter_by(id=category_id).one()
+    # if login_session['user_id'] != category.user_id:
+    #     return "<script>function myFunction() {alert('You
+    #     are not authorized to add items to this category.
+    #     Please create your own category in order to add items.');}</script><body onload='myFunction()'>"
+    if request.method == 'POST':
+        newItem = Item(name=request.form['name'],
+                description=request.form['description'],
+                category_id=category_id) # , user_id=category.user_id)
+        session.add(newItem)
+        session.commit()
+        flash('New Menu %s Item Successfully Created' % (newItem.name))
+        return redirect(url_for('showCategory', category_id=category_id))
+    else:
+        return render_template('newitem.html', category_id=category_id)
 
 # Edit item in a category
-@app.route('/item/edit/<int:category_id>/<int:item_id>')
+@app.route('/category/<int:category_id>/item/<int:item_id>/edit')
 def editItem(category_id, item_id):
     return "Edit item page for item {} in category {}".format(item_id, category_id)
 
 # delete item in a category
-@app.route('/item/delete/<int:category_id>/<int:item_id>')
+@app.route('/category/<int:category_id>/item/<int:item_id>/delete')
 def deleteItem(category_id, item_id):
     return "Delete item page for item {} in category {}".format(item_id, category_id)
 
@@ -108,7 +124,7 @@ def showCategoriesJSON():
     return jsonify(category=[r.serialize for c in categories])
 
 # Items API
-@app.route('/item/JSON/<int:category_id>')
+@app.route('/category/<int:category_id>/item/JSON')
 def showItems(category_id):
     return "Items in category {} JSON".format(category_id)
 
