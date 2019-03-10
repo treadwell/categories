@@ -147,12 +147,13 @@ def deleteItem(category_id, item_id):
 @app.route('/category/JSON')
 def showCategoriesJSON():
     categories = session.query(Category).all()
-    return jsonify(category=[r.serialize for c in categories])
+    return jsonify(category=[c.serialize for c in categories])
 
 # Items API
 @app.route('/category/<int:category_id>/item/JSON')
 def showItems(category_id):
-    return "Items in category {} JSON".format(category_id)
+    items = session.query(Item).filter_by(category_id=category_id).all()
+    return jsonify(items=[i.serialize for i in items])
 
 # Login
 @app.route('/login')
