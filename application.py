@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Category, Item
+from database_setup import Base, Category, Item, User
 from flask import session as login_session
 import random, string
 from oauth2client.client import flow_from_clientsecrets
@@ -289,7 +289,8 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-
+# Disconnect based on provider
+@app.route('/disconnect')
 def disconnect():
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
