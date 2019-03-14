@@ -16,7 +16,7 @@ There are nine pages:
 3. newCategory.html - adds a new category
 4. editCategory.html - for editing category information
 5. deleteCategory.html - for deleting a category
-6. newItem.html - for adding a new menu item to a
+6. newItem.html - for adding a new item to a
    category
 7. editItem.html - for editing an item within a category
 8. deleteItem.html - for deleting an item within a category
@@ -38,9 +38,9 @@ Routes are structured as follows:
   a single category
 * /category/<int:category_id>/new - add an item to a
   category
-* /category/<int:category_id>/<int:menu_id>/edit - edit
+* /category/<int:category_id>/<int:item_id>/edit - edit
   an item in a category
-* /category/<int:category_id>/<int:menu_id>/delete -
+* /category/<int:category_id>/<int:item_id>/delete -
   delete an item in a category
 * /category/<int:category_id>/JSON - retrieve a
   serialized list of items and their attributes from a category
