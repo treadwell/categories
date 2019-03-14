@@ -9,7 +9,7 @@ SQLite3 database.
 
 ### Pages
 
-There are eight pages:
+There are nine pages:
 
 1. categories.html - lists all categories
 2. category.html - lists all items in a single category
@@ -34,8 +34,6 @@ Routes are structured as follows:
   category
 * /categories/JSON - retrieve a serialized list of
   category data
-* /category/<int:category_id>/JSON - retrieve a
-  serialized list of category data for a single category
 * /category/<int:category_id> - shows all items in
   a single category
 * /category/<int:category_id>/new - add an item to a
