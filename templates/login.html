@@ -1,4 +1,10 @@
-<head>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+
 
   <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -18,9 +24,37 @@
 
 </head>
 
-
 <body>
+<div class="container">
 
+<div class="row top-menu">
+	<div class="col-md-6">
+		<a href="{{url_for('showCategories')}}">
+			<span class="glyphicon glyphicon-home" aria-hidden="true"></span>Show All Categories
+		</a>
+	</div>
+	<div class="col-md-6 text-right">
+          {% if 'username' not in session %}
+		<a href="{{url_for('showLogin')}}">Click Here to Log in</a>
+          {% else %}
+                <a href="{{url_for('disconnect')}}">Disconnect</a>
+          {% endif %}
+	</div>
+</div>
+
+	<div class="row top-menu">
+		<div class="col-md-10"></div>
+		<div class="col-md-2 text-right"></div>
+	</div>
+	<div class="row divider blue">
+		<div class="col-md-12"></div>
+	</div>
+	<div class="row banner main">
+		<div class="col-md-1"></div>
+		<div class="col-md-11 padding-none">
+			<h1>Login to Catalog Application</h1>
+		</div>
+	</div>
 
 <!-- GOOGLE PLUS SIGN IN-->
 
@@ -66,7 +100,7 @@
 
 <!--END GOOGLE PLUS SIGN IN -->
 
-
+</div>
 
   </body>
 

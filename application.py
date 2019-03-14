@@ -177,7 +177,7 @@ def deleteCategory(category_id):
     	Category).filter_by(id=category_id).one()
     if 'username' not in login_session:
         return redirect('/login')
-    if restaurantToDelete.user_id != login_session['user_id']:
+    if categoryToDelete.user_id != login_session['user_id']:
         return "<script>function myFunction() {alert('You are not authorized to delete this category. Please create your own category in order to delete.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         session.delete(categoryToDelete)
@@ -228,7 +228,7 @@ def editItem(category_id, item_id):
         return redirect('/login')
     editedItem = session.query(Item).filter_by(id=item_id).one()
     category = session.query(Category).filter_by(id=category_id).one()
-    if login_session['user_id'] != categor.user_id:
+    if login_session['user_id'] != category.user_id:
         return """<script>function myFunction() {alert('You
         are not authorized to edit items in this category.
         Please create your own category in order to edit items.');}</script><body onload='myFunction()'>"""
