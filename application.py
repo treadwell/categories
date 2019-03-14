@@ -1,3 +1,10 @@
+#!/usr/bin/env python2.7
+
+"""Catalog Web Application for capturing categories and items within them. Users cannot see other user
+categories or items.
+
+Code based on restaurant application developed as part of Udacity Nanodegree program."""
+
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -257,15 +264,21 @@ def deleteItem(category_id, item_id):
         return render_template('deleteItem.html', item = itemToDelete, category_id=category_id)
 
 # Categories API
-@app.route('/category/JSON')
+@app.route('/categories/JSON')
 def showCategoriesJSON():
-    categories = session.query(Category).all()
+    if 'username' not in login_session:
+        return redirect('/login')
+    else:
+        categories = session.query(Category).filter_by(user_id = login_session['user_id']).all()
     return jsonify(category=[c.serialize for c in categories])
 
 # Items API
-@app.route('/category/<int:category_id>/item/JSON')
+@app.route('/category/<int:category_id>/JSON')
 def showItems(category_id):
-    items = session.query(Item).filter_by(category_id=category_id).all()
+    if 'username' not in login_session:
+        return redirect('/login')
+    items = session.query(Item).filter_by(category_id=category_id,
+            user_id = login_session['user_id']).all()
     return jsonify(items=[i.serialize for i in items])
 
 
