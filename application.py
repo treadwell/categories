@@ -6,8 +6,14 @@ Users cannot see other user categories or items.
 Code based on restaurant application developed as part of Udacity
 Full Stack Nanodegree program."""
 
-from flask import Flask, render_template, request
-from flask import redirect, url_for, flash, jsonify
+from flask import (
+        Flask,
+        render_template,
+        request,
+        redirect,
+        url_for,
+        flash,
+        jsonify)
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, Item, User
