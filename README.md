@@ -4,8 +4,8 @@ This application allows users to capture categories and items within those categ
 
 ## Design
 
-The project uses python in a flask framework to access a
-SQLite3 database.
+The project uses python in a flask framework to access either a
+SQLite3 or PostgreSQL database. Depending on database used the database engine string in both the `application.py` and the `database_setup.py` file will need to be commented/uncommented. 
 
 ### Pages
 
@@ -48,7 +48,7 @@ Routes are structured as follows:
 
 ### Database
 
-The SQLlite3 database, `category.db` contains three
+The SQLlite3 database, `category.db` (or postgres database, category) contains three
 tables, `Category`, `Item`, and `User`. These are set up using the `database_setup.py` script as described below.
 
 ### Python scripts
@@ -71,17 +71,17 @@ another that contains routes and functionality, `application.py`
 ### Installing
 
  1. Download the latest version of Python from the link in Prerequisites.
- 2. Download and install SQLite3.
+ 2. Download and install SQLite3 or download and configure PostgreSQL.
  3. Install SQLAlchemy via pip: `pip install sqlalchemy`
  4. Install Flask via pip: `pip install flask`
  5. Clone this repository.
- 6. Use command `python database_setup.py` to create the database.
+ 6. Use command `python database_setup.py` to create the database. Postgres will require setting up the database `catalog` with user `catalog`.
 
 ## Instructions
 
 * Use command `python application.py` to run the application
-  database
-* Access the application on http://localhost:8000/
+  database locally.
+* Access the application on http://localhost:8000/ if run locally or on the appropriate URI if hosted.
 
 ## Authors
 
